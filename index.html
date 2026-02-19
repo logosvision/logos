@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOGOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
+  <style>
+
+    /* ══════════════════════════════════════════
+       RESET & ROOT
+    ══════════════════════════════════════════ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg:     #111111;
+      --purple: #5A2D82;
+      --gold:   #C6A75E;
+      --gold2:  #e8c97a;
+      --dim:    #7a6a50;
+      --text:   #d4c4a0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* ══════════════════════════════════════════
+       GRAIN TEXTURE
+    ══════════════════════════════════════════ */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+      opacity: 0.028;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* ══════════════════════════════════════════
+       INTRO CURTAIN
+    ══════════════════════════════════════════ */
+    #curtain {
+      position: fixed;
+      inset: 0;
+      background: #0a0a0a;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    #curtain-line {
+      width: 1px;
+      height: 0;
+      background: var(--gold);
+      transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ══════════════════════════════════════════
+       SCROLL REVEAL
+    ══════════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ══════════════════════════════════════════
+       GOLD DIVIDER
+    ══════════════════════════════════════════ */
+    .divider {
+      width: min(600px, 80vw);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
+      margin: 0 auto;
+    }
+
+    .divider-full {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold) 70%, transparent 100%);
+    }
+
+    /* ══════════════════════════════════════════
+       HERO
+    ══════════════════════════════════════════ */
+    .hero {
+      width: 100%;
+      max-width: 960px;
+      padding: 120px 48px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* ── ICHTHYS ── */
+    .logo-wrap {
+      margin-bottom: 52px;
+      cursor: pointer;
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  filter  0.5s ease;
+    }
+    .logo-wrap:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 22px rgba(198,167,94,0.55));
+    }
+
+    .ichthys {
+      width: 148px;
+      height: 72px;
+      filter: drop-shadow(0 0 10px rgba(198,167,94,0.2));
+    }
+
+    /* ── TITLE ── */
+    .title {
+      font-family: 'Cinzel Decorative', serif;
+      font-weight: 900;
+      font-size: clamp(60px, 15vw, 152px);
+      letter-spacing: 0.22em;
+      line-height: 1;
+      color: var(--gold);
+      text-shadow:
+        0 0 80px rgba(198,167,94,0.12),
+        0 0 2px  rgba(198,167,94,0.4);
+      overflow: hidden;
+    }
+
+    /* letter-by-letter spans injected by JS */
+    .title .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .title .char.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── SUBTITLE ── */
+    .subtitle {
+      margin-top: 28px;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(10px, 1.8vw, 13px);
+      letter-spacing: 0.55em;
+      text-transform: uppercase;
+      color: var(--purple);
+      opacity: 0;
+      transition: opacity 1s ease 0.2s;
+    }
+    .subtitle.in { opacity: 1; }
+
+    /* ── HERO ORNAMENT ── */
+    .ornament {
+      margin-top: 44px;
+      font-size: 18px;
+      color: var(--gold);
+      opacity: 0.4;
+      letter-spacing: 0.6em;
+    }
+
+    /* ══════════════════════════════════════════
+       MANIFESTO
+    ══════════════════════════════════════════ */
+    .manifesto {
+      width: 100%;
+      max-width: 700px;
+      padding: 80px 48px;
+      text-align: center;
+    }
+
+    .manifesto .inner {
+      padding: 56px 0;
+    }
+
+    .manifesto p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(16px, 2.6vw, 22px);
+      font-weight: 300;
+      line-height: 2.1;
+      letter-spacing: 0.06em;
+      color: var(--text);
+    }
+
+    .manifesto p em {
+      font-style: italic;
+      color: var(--gold);
+      font-weight: 400;
+    }
+
+    /* ══════════════════════════════════════════
+       CTA BUTTONS
+    ══════════════════════════════════════════ */
+    .cta-section {
+      width: 100%;
+      max-width: 860px;
+      padding: 70px 48px 90px;
+    }
+
+    .cta-label {
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.6em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 44px;
+    }
+
+    .links {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 30px 24px;
+      background: var(--purple);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      text-decoration: none;
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transform: translateY(0);
+      box-shadow: none;
+      transition:
+        transform   0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        box-shadow  0.35s ease,
+        border-width 0.2s ease,
+        color       0.3s ease;
+    }
+
+    /* Gold fill slide */
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 0;
+    }
+    .btn:hover::before { transform: translateX(0); }
+
+    .btn:hover {
+      color: var(--bg);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(198,167,94,0.28);
+      border-width: 2px;
+    }
+    .btn:hover svg { stroke: var(--bg); }
+
+    .btn span, .btn svg {
+      position: relative;
+      z-index: 1;
+      transition: color 0.3s ease, stroke 0.3s ease;
+    }
+
+    .btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════ */
+    footer {
+      width: 100%;
+      padding: 36px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      margin-top: auto;
+    }
+
+    .footer-text {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.55em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════ */
+    @media (max-width: 580px) {
+      .hero        { padding: 80px 24px 60px; }
+      .manifesto   { padding: 60px 24px; }
+      .cta-section { padding: 50px 24px 70px; }
+      .links       { grid-template-columns: 1fr; gap: 16px; }
+      footer       { padding: 28px 24px; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ═══ CURTAIN ═══ -->
+  <div id="curtain">
+    <div id="curtain-line"></div>
+  </div>
+
+  <!-- ═══════════════════════════
+       HERO
+  ═══════════════════════════ -->
+  <section class="hero">
+
+    <div class="logo-wrap reveal" id="logo">
+      <svg class="ichthys" viewBox="0 0 148 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Fish body -->
+        <path
+          d="M22 36 C22 10 116 2 134 36 C116 70 22 62 22 36 Z"
+          stroke="#C6A75E" stroke-width="1.8" fill="rgba(90,45,130,0.06)"/>
+        <!-- Inner accent line -->
+        <path
+          d="M34 36 C58 27 96 27 122 36"
+          stroke="#C6A75E" stroke-width="0.7" opacity="0.35"/>
+        <!-- Tail left arm -->
+        <line x1="22" y1="36" x2="4"  y2="12" stroke="#C6A75E" stroke-width="1.8" stroke-linecap="square"/>
+        <!-- Tail right arm -->
+        <line x1="22" y1="36" x2="4"  y2="60" stroke="#C6A75E" stroke-width="1.8" stroke-linecap="square"/>
+        <!-- Tail cross bar -->
+        <line x1="4"  y1="12" x2="4"  y2="60" stroke="#C6A75E" stroke-width="1.8" stroke-linecap="square"/>
+      </svg>
+    </div>
+
+    <h1 class="title" id="title-word" aria-label="LOGOS">LOGOS</h1>
+
+    <p class="subtitle" id="subtitle">Truth &nbsp;&nbsp;·&nbsp;&nbsp; Silence &nbsp;&nbsp;·&nbsp;&nbsp; Word</p>
+
+    <div class="ornament reveal" style="transition-delay:0.4s">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  </section>
+
+  <div class="divider-full reveal"></div>
+
+  <!-- ═══════════════════════════
+       MANIFESTO
+  ═══════════════════════════ -->
+  <div class="manifesto reveal">
+    <div class="divider"></div>
+    <div class="inner">
+      <p>
+        The world is loud.<br>
+        <em>Truth whispers.</em><br><br>
+        This is a sanctuary for the mind —<br>
+        where language is not noise,<br>
+        but the foundation of all things.
+      </p>
+    </div>
+    <div class="divider"></div>
+  </div>
+
+  <div class="divider-full reveal"></div>
+
+  <!-- ═══════════════════════════
+       CTA BUTTONS
+  ═══════════════════════════ -->
+  <section class="cta-section reveal">
+
+    <p class="cta-label">Join the Sanctuary</p>
+
+    <nav class="links">
+
+      <a href="#" target="_blank" rel="noopener" class="btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M21.5 3.5L2.5 10.5l6.5 2.5 2 7 3-4 5 4 2.5-16.5z"/>
+          <line x1="9" y1="13" x2="15.5" y2="7.5"/>
+        </svg>
+        <span>Telegram</span>
+      </a>
+
+      <a href="#" target="_blank" rel="noopener" class="btn">
+        <svg viewBox="0 0 24 24">
+          <rect x="2" y="5" width="20" height="14"/>
+          <polygon points="10,9 17,12 10,15" fill="#C6A75E" stroke="none" class="play-tri"/>
+        </svg>
+        <span>YouTube</span>
+      </a>
+
+      <a href="#" target="_blank" rel="noopener" class="btn">
+        <svg viewBox="0 0 24 24">
+          <circle cx="14.5" cy="9.5" r="5.5"/>
+          <rect x="4" y="4" width="3" height="16"/>
+        </svg>
+        <span>Patreon</span>
+      </a>
+
+      <a href="#" target="_blank" rel="noopener" class="btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>
+        </svg>
+        <span>TikTok</span>
+      </a>
+
+    </nav>
+  </section>
+
+  <!-- ═══════════════════════════
+       FOOTER
+  ═══════════════════════════ -->
+  <footer class="reveal">
+    <div class="divider-full"></div>
+    <p class="footer-text">&copy;&nbsp;LOGOS</p>
+  </footer>
+
+
+  <!-- ═══════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════ -->
+  <script>
+    /* ─── CEREMONIAL INTRO ─── */
+    (function () {
+      const curtain = document.getElementById('curtain');
+      const line    = document.getElementById('curtain-line');
+      const title   = document.getElementById('title-word');
+      const sub     = document.getElementById('subtitle');
+      const logo    = document.getElementById('logo');
+
+      // Phase 1 — vertical gold line grows
+      setTimeout(() => {
+        line.style.height = '120px';
+      }, 200);
+
+      // Phase 2 — line fades out, curtain lifts
+      setTimeout(() => {
+        line.style.opacity = '0';
+        line.style.transition = 'opacity 0.4s ease, height 0.6s ease';
+        curtain.style.transition = 'opacity 0.8s ease';
+        curtain.style.opacity = '0';
+      }, 950);
+
+      // Phase 3 — curtain gone
+      setTimeout(() => {
+        curtain.style.display = 'none';
+        triggerHero();
+      }, 1800);
+
+      function triggerHero () {
+        // Logo
+        logo.classList.add('visible');
+
+        // Letter-by-letter title
+        const text  = title.textContent.trim();
+        title.innerHTML = '';
+        [...text].forEach((ch, i) => {
+          const span = document.createElement('span');
+          span.className = 'char';
+          span.textContent = ch === ' ' ? '\u00A0' : ch;
+          title.appendChild(span);
+          setTimeout(() => span.classList.add('in'), 200 + i * 90);
+        });
+
+        // Subtitle
+        setTimeout(() => sub.classList.add('in'), 200 + text.length * 90 + 200);
+
+        // Scroll reveals after hero settles
+        setTimeout(initReveal, 1200);
+      }
+    }());
+
+    /* ─── SCROLL REVEAL ─── */
+    function initReveal () {
+      const els = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      els.forEach(el => {
+        // Hero logo already handled
+        if (el.id === 'logo') return;
+        observer.observe(el);
+      });
+    }
+
+    /* ─── BUTTON PROXIMITY GLOW ─── */
+    const btns = document.querySelectorAll('.btn');
+    document.addEventListener('mousemove', (e) => {
+      btns.forEach(b => {
+        const r  = b.getBoundingClientRect();
+        const cx = r.left + r.width  / 2;
+        const cy = r.top  + r.height / 2;
+        const d  = Math.hypot(e.clientX - cx, e.clientY - cy);
+        const g  = Math.max(0, 1 - d / 380);
+        if (g > 0.08) {
+          b.style.boxShadow = `0 0 ${20 * g}px rgba(198,167,94,${0.1 + g * 0.2})`;
+        } else {
+          b.style.boxShadow = '';
+        }
+      });
+    });
+
+    /* ─── YouTube button: keep triangle black on hover ─── */
+    document.querySelectorAll('.btn').forEach(btn => {
+      const tri = btn.querySelector('.play-tri');
+      if (!tri) return;
+      btn.addEventListener('mouseenter', () => { tri.setAttribute('fill', '#111111'); });
+      btn.addEventListener('mouseleave', () => { tri.setAttribute('fill', '#C6A75E'); });
+    });
+  </script>
+
+</body>
+</html>
